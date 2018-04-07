@@ -28,9 +28,8 @@ class StatusUpdater:
                 'status_emoji': current_emot
             }
         }
-        response = requests.post('https://slack.com/api/users.profile.set', data=json.dumps(update),
+        requests.post('https://slack.com/api/users.profile.set', data=json.dumps(update),
                                  headers=self.default_headers)
-        print('status_code: {0}\nbody: {1}'.format(response.status_code, response.json()))
 
     def display_status_emot(self):
         return requests.get('https://slack.com/api/users.profile.get',
