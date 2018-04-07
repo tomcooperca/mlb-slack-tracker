@@ -16,5 +16,6 @@ def main():
     print("Status of user {0}: {1}".format(EMAIL, updater.display_status()))
     sys.exit(0)
 
+
 if __name__ == '__main__':
     main()
