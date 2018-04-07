@@ -37,10 +37,13 @@ def find_divison_by_abbrev(divisions, abbrev):
 
 
 def main():
+    if not TOKEN or not EMAIL or not TEAM:
+        print("Missing required environment variables. \nRequired:\n\tSLACK_TOKEN\tSLACK_EMAIL\tMLB_TEAM\n\nExiting...")
+        sys.exit(1)
+
     saved_divisions = mlbgame.standings().divisions
     found_division = find_divison_by_abbrev(saved_divisions, TEAM)
     found_team = find_team_by_abbrev(saved_divisions, TEAM)
-
     today = datetime.datetime.now()
     todays_games = mlbgame.day(today.year, today.month, today.day)
     today_game_status = None
@@ -56,9 +59,7 @@ def main():
     else:
         final_status = "{} | {}W - {}L | #{} in {}".format(today_game_status, found_team.w, found_team.l,
                                                            found_team.place, found_division.name)
-    if not TOKEN or not EMAIL:
-        print("Missing required environment variables. Exiting...")
-        sys.exit(1)
+
     updater = StatusUpdater(token=TOKEN, email=EMAIL)
     updater.update_status(status=final_status)
     print("Status of user {0} updated to \"{1}\"".format(EMAIL, updater.display_status()))
