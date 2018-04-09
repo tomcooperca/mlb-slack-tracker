@@ -36,12 +36,33 @@ def find_divison_by_abbrev(divisions, abbrev):
                 return division
 
 
+def valid_team(divisions, abbrev):
+    found_team = False
+    for division in divisions:
+        for team in division.teams:
+            if team.team_abbrev == abbrev:
+                found_team = True
+    return found_team
+
+
+def list_all_team_abbrevs(divisions):
+    abbrevs = []
+    for division in divisions:
+        for team in division.teams:
+            abbrevs.append(team.team_abbrev)
+    return abbrevs
+
+
 def main():
     if not TOKEN or not EMAIL or not TEAM:
         print("Missing required environment variables. \nRequired:\n\tSLACK_TOKEN\tSLACK_EMAIL\tMLB_TEAM\n\nExiting...")
         sys.exit(1)
 
     saved_divisions = mlbgame.standings().divisions
+    if not valid_team(saved_divisions, TEAM):
+        print("Invalid MLB_TEAM value.\nValid values: {}".format(list_all_team_abbrevs(saved_divisions)))
+        sys.exit(1)
+
     found_division = find_divison_by_abbrev(saved_divisions, TEAM)
     found_team = find_team_by_abbrev(saved_divisions, TEAM)
     today = datetime.datetime.now()
