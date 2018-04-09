@@ -19,12 +19,12 @@ class StatusUpdater:
                                 headers=self.default_headers)
         return response.json()['user']['id']
 
-    def update_status(self, status='Test'):
+    def update_status(self, status=None):
         current_emot = self.display_status_emot()
         update = {
             'user': self.find_user_by_email(),
             'profile': {
-                'status_text': status,
+                'status_text': status if status else self.display_status(),
                 'status_emoji': current_emot
             }
         }
