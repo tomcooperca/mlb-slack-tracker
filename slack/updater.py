@@ -5,7 +5,8 @@ from urllib.parse import urlencode
 
 class StatusUpdater:
 
-    def __init__(self, token='', email='example@email.com'):
+    def __init__(self, token='', email='example@email.com', ssl_verify=True):
+        self.ssl_verify = ssl_verify
         self.token = token
         self.email = email
         self.default_headers = {
@@ -16,7 +17,7 @@ class StatusUpdater:
     def find_user_by_email(self):
         encoded = urlencode({'email': self.email})
         response = requests.get('https://slack.com/api/users.lookupByEmail?{0}'.format(encoded),
-                                headers=self.default_headers)
+                                headers=self.default_headers, verify=self.ssl_verify)
         return response.json()['user']['id']
 
     def update_status(self, status=None):
@@ -29,12 +30,12 @@ class StatusUpdater:
             }
         }
         requests.post('https://slack.com/api/users.profile.set', data=json.dumps(update),
-                                 headers=self.default_headers)
+                                 headers=self.default_headers, verify=self.ssl_verify)
 
     def display_status_emot(self):
         return requests.get('https://slack.com/api/users.profile.get',
-                            headers=self.default_headers).json()['profile']['status_emoji']
+                            headers=self.default_headers, verify=self.ssl_verify).json()['profile']['status_emoji']
 
     def display_status(self):
         return requests.get('https://slack.com/api/users.profile.get',
-                            headers=self.default_headers).json()['profile']['status_text']
+                            headers=self.default_headers, verify=self.ssl_verify).json()['profile']['status_text']
