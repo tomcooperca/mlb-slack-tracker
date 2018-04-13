@@ -6,6 +6,8 @@ from urllib.parse import urlencode
 class StatusUpdater:
 
     def __init__(self, token='', email='example@email.com', ssl_verify=True):
+        if not ssl_verify:
+            requests.packages.urllib3.disable_warnings()
         self.ssl_verify = ssl_verify
         self.token = token
         self.email = email
