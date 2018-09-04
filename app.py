@@ -1,4 +1,10 @@
-import mlb_team_updater
+from flask import Flask
+app = Flask(__name__)
 
-if __name__ == '__main__':
-    mlb_team_updater.main()
+@app.route("/")
+def hello():
+    return "Hello World!"
+
+@app.route("/authorize")
+def authorize():
+    return "Authorized"
