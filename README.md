@@ -7,6 +7,7 @@ Slack app that will update your status with your favourite teams stats/standings
 2. As part of Flask server app, monitor a given MLB team for updates to a game, standings and any other tracked info. Upon changes, fire off Slack status updates (configurable interval, passed in by Slack app config?)
 3. Separate parsing of `mlbgame` API results into appropriate objs (such as a `Team`?)
 4. Get decent unit tests and add them to Travis CI.
+5. Bot form of this app that will message an individual on today's game and standings instead of mucking with a status. 
 
 ## Starting the server
 ```
