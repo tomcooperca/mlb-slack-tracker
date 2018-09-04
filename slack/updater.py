@@ -1,3 +1,5 @@
+# Slack status updater
+# POST's statuses to Slack API
 import requests
 import json
 from urllib.parse import urlencode
