@@ -2,6 +2,7 @@ language: python
 python:
   - "3.6"
 install:
-  - pipenv install
+  - pip install pipenv --upgrade
+	- pipenv install --dev --skip-lock
 script:
-  - pipenv run pytest
+  - pipenv run py.test
