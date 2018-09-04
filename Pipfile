@@ -1,18 +1,17 @@
 [[source]]
-url = "https://pypi.python.org/simple"
+url = "https://pypi.org/simple"
 verify_ssl = true
 name = "pypi"
 
 [packages]
-certifi = "==2018.1.18"
-chardet = "==3.0.4"
-idna = "==2.6"
-lxml = "==4.2.1"
-mlbgame = "*"
+flask = "*"
 requests = "*"
-"urllib3" = "==1.22"
+mlbgame = "*"
 
 [dev-packages]
+pytest = "*"
+hypothesis = "*"
+mock = "*"
 
 [requires]
-python_version = "3.6"
+python_version = "3.7"
