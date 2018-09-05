@@ -1,6 +1,8 @@
 from slack.token import Token
 from flask import Flask, send_from_directory, request
 from celery import Celery
+import os
+
 app = Flask(__name__, static_url_path='')
 # app.config.update(
 #     CELERY_BROKER_URL='redis://localhost:6379',
