@@ -22,12 +22,10 @@ def authorize():
             request.args.get('redirect_uri'),
             os.environ['SLACK_CLIENT_ID'],
             os.environ['SLACK_CLIENT_SECRET'])
+        session['token'] = t.generate_token()
+        return redirect(url_for('/success'))
     except KeyError:
-        print("No auth code")
-    else:
-    session['token'] = t.generate_token()
-    return redirect(url_for('/success'))
-
+        return "Authorization failed!"
 
 @app.route("/success")
 def successful_authorization():
