@@ -1,6 +1,6 @@
 from slack.token import Token
 from slack.user import User
-from flask import Flask, redirect, url_for, send_from_directory, request
+from flask import Flask, redirect, url_for, session, request, send_from_directory,
 from celery import Celery
 import os
 
