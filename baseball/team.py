@@ -1,3 +1,5 @@
+import mlbgame
+
 # Represents an MLB team, with current state of its games, standings, etc.
 class Team:
     def __init__(self, name):
