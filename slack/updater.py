@@ -7,22 +7,26 @@ from urllib.parse import urlencode
 
 class StatusUpdater:
 
-    def __init__(self, token='', email='example@email.com', ssl_verify=True):
+    def __init__(self, email='example@email.com', token='', slack_url='https://slack.com/api', ssl_verify=True):
+        self.email = email
+        self.token = token
+        self.slack_url = slack_url
         if not ssl_verify:
             requests.packages.urllib3.disable_warnings()
-        self.ssl_verify = ssl_verify
-        self.token = token
-        self.email = email
         self.default_headers = {
             'Authorization': 'Bearer {}'.format(self.token),
             'Content-Type': 'application/json'
         }
+        self.profile = requests.get('{}/users.profile.get'.format(self.slack_url),
+                                headers=self.default_headers, verify=self.ssl_verify).json()
+
 
     def find_user_by_email(self):
         encoded = urlencode({'email': self.email})
         response = requests.get('https://slack.com/api/users.lookupByEmail?{0}'.format(encoded),
                                 headers=self.default_headers, verify=self.ssl_verify)
-        return response.json()['user']['id']
+        if response
+            return response.json()['user']['id']
 
     def update_status(self, status=None):
         current_emot = self.display_status_emot()
@@ -33,13 +37,11 @@ class StatusUpdater:
                 'status_emoji': current_emot
             }
         }
-        requests.post('https://slack.com/api/users.profile.set', data=json.dumps(update),
+        requests.post('{}/users.profile.set'.format(self.slack_url), data=json.dumps(update),
                                  headers=self.default_headers, verify=self.ssl_verify)
 
     def display_status_emot(self):
-        return requests.get('https://slack.com/api/users.profile.get',
-                            headers=self.default_headers, verify=self.ssl_verify).json()['profile']['status_emoji']
+        return self.profile['profile']['status_emoji']
 
     def display_status(self):
-        return requests.get('https://slack.com/api/users.profile.get',
-                            headers=self.default_headers, verify=self.ssl_verify).json()['profile']['status_text']
+        return self.profile['profile']['status_text']
