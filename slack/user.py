@@ -1,4 +1,5 @@
 from baseball.team import Team
+from slack.updater import StatusUpdater
 
 class User():
     def __init__(self, token, id, email='inbox@example.com', team=Team('NYY'), created_date=None):

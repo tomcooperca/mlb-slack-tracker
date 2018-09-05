@@ -11,6 +11,7 @@ class StatusUpdater:
         self.id = id
         self.token = token
         self.slack_url = slack_url
+        self.ssl_verify = ssl_verify
         if not ssl_verify:
             requests.packages.urllib3.disable_warnings()
         self.default_headers = {

@@ -9,6 +9,7 @@ requests = "*"
 mlbgame = "*"
 celery = "*"
 gunicorn = "*"
+pytest = "*"
 
 [dev-packages]
 pytest = "*"
