@@ -16,6 +16,7 @@ app.config['SECRET_KEY'] = '7ce9431ef410e9fb730e140f290abd0b69e2568515b27644'
 def hello():
     return app.send_static_file("slack_button.html")
 
+
 @app.route("/authorize")
 def authorize():
     try:
@@ -24,15 +25,22 @@ def authorize():
             os.environ['SLACK_CLIENT_ID'],
             os.environ['SLACK_CLIENT_SECRET'])
         session['token'] = t.generate_token()
-        return redirect(url_for('/success'))
+        return redirect(url_for('successful'))
     except KeyError:
-        return "Authorization failed!"
+        return redirect(url_for('failed'))
+
 
 @app.route("/success")
-def successful_authorization():
+def successful():
     print("Token: {}".format(session['token']))
     user = User(token=session['token']['access_token'], id=session['token']['user_id'])
     return "Current user: {}\nStatus: {}\nEmoji: {}".format(user.id, user.display_status(), user.display_status_emot())
+
+
+@app.route("/failure")
+def failed():
+    return "Authorization failed!"
+
 
 def make_celery(app):
     celery = Celery(
