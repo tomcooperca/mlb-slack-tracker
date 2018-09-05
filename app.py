@@ -34,7 +34,7 @@ def authorize():
 def successful():
     print("Token: {}".format(session['token']))
     user = User(token=session['token']['access_token'], id=session['token']['user_id'])
-    return "Current user: {}\nStatus: {}\nEmoji: {}".format(user.id, user.display_status(), user.display_status_emot())
+    return "Current user: {}\nStatus: {}\nEmoji: {}".format(user.id, user.status(), user.emoji())
 
 
 @app.route("/failure")
