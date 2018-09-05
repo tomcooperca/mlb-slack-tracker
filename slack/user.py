@@ -1,12 +1,13 @@
 from baseball.team import Team
 
 class User():
-    def __init__(self, email, team=Team('NYY'), created_date,  token):
+    def __init__(self, token, id, email='inbox@example.com', team=Team('NYY'), created_date=None):
+        self.token = token
+        self.id = id
         self.email = email
         self.team = team
         self.created_date = created_date
-        self.token = token
-        self.su = StatusUpdater(email, token)
+        self.su = StatusUpdater(id, token)
 
 
     def status(self):

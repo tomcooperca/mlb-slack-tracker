@@ -1,5 +1,6 @@
 from slack.token import Token
-from flask import Flask, send_from_directory, request
+from slack.user import User
+from flask import Flask, redirect, url_for, send_from_directory, request
 from celery import Celery
 import os
 
@@ -24,9 +25,15 @@ def authorize():
     except KeyError:
         print("No auth code")
     else:
-        return t.generate_token()
-    return "Didn't generate token"
+    session['token'] = t.generate_token()
+    return redirect(url_for('/success'))
 
+
+@app.route("/success")
+def successful_authorization():
+    print("Token: {}".format(session['token']))
+    user = User(token=session['token']['access_token'], id=session['token']['user_id'])
+    return "Current user: {}\nStatus: {}\nEmoji: {}".format(user.id, user.display_status(), user.display_status_emot())
 
 def make_celery(app):
     celery = Celery(

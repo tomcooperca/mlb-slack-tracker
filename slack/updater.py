@@ -7,8 +7,8 @@ from urllib.parse import urlencode
 
 class StatusUpdater:
 
-    def __init__(self, email='example@email.com', token='', slack_url='https://slack.com/api', ssl_verify=True):
-        self.email = email
+    def __init__(self, id, token, slack_url='https://slack.com/api', ssl_verify=True):
+        self.id = id
         self.token = token
         self.slack_url = slack_url
         if not ssl_verify:
@@ -21,17 +21,10 @@ class StatusUpdater:
                                 headers=self.default_headers, verify=self.ssl_verify).json()
 
 
-    def find_user_by_email(self):
-        encoded = urlencode({'email': self.email})
-        response = requests.get('https://slack.com/api/users.lookupByEmail?{0}'.format(encoded),
-                                headers=self.default_headers, verify=self.ssl_verify)
-        if response
-            return response.json()['user']['id']
-
     def update_status(self, status=None):
         current_emot = self.display_status_emot()
         update = {
-            'user': self.find_user_by_email(),
+            'user': self.id,
             'profile': {
                 'status_text': status if status else self.display_status(),
                 'status_emoji': current_emot
