@@ -12,8 +12,8 @@ class User():
 
 
     def status(self):
-        return su.display_status()
+        return self.su.display_status()
 
 
     def emoji(self):
-        return su.display_status_emot()
+        return self.su.display_status_emot()
