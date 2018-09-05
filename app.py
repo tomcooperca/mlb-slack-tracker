@@ -18,6 +18,7 @@ def hello():
 def authorize():
     try:
         t = Token(request.args.get('code'),
+            request.args.get('redirect_uri'),
             os.environ['SLACK_CLIENT_ID'],
             os.environ['SLACK_CLIENT_SECRET'])
     except KeyError:
