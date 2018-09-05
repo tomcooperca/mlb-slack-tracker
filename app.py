@@ -5,6 +5,7 @@ from celery import Celery
 import os
 
 app = Flask(__name__, static_url_path='')
+app.config['SECRET_KEY'] = '7ce9431ef410e9fb730e140f290abd0b69e2568515b27644'
 # app.config.update(
 #     CELERY_BROKER_URL='redis://localhost:6379',
 #     CELERY_RESULT_BACKEND='redis://localhost:6379'
