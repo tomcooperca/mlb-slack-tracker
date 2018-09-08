@@ -1,13 +1,16 @@
 [![Build Status](https://travis-ci.org/tomcooperca/mlb-slack-tracker.svg?branch=master)](https://travis-ci.org/tomcooperca/mlb-slack-tracker)
-# mlb-slack-tracker
-Slack app that will update your status with your favourite teams stats/standings!
+Track your favorite MLB team in Slack!
 
-## Starting the server
+# Features
+* updates your status in Slack with a quick summary of your team; who & where they're playing today, their W-L record and division standings
+* configurable bot that will drop you a DM with similar info as well to notify you when they're playing
+
+# Starting the server
 ```
 pipenv run flask run
 ```
 
-## Tests
+# Running the tests
 ```
 pipenv run py.test
 ```
