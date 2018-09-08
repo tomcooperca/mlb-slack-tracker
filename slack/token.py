@@ -17,5 +17,6 @@ class Token():
             'client_secret': self.client_secret
         }
         response = requests.get('https://slack.com/api/oauth.access', params=oauth_params)
-        print("Token response: {}".format(response.text))
-        return response.json()
+        if (response.status_code == 200):
+            return response.json()
+        return None
