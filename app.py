@@ -51,6 +51,7 @@ def failed():
     return "Authorization failed due to unknown error!"
 
 @app.route("/unavailable")
+def unavailable():
     return "Service unavailable (is Slack down?)"
 
 
