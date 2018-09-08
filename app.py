@@ -24,22 +24,34 @@ def authorize():
             request.args.get('redirect_uri'),
             os.environ['SLACK_CLIENT_ID'],
             os.environ['SLACK_CLIENT_SECRET'])
-        session['token'] = t.generate_token()
+        response = t.generate_token()
+        if not response:
+            return redirect(url_for('unavailable'))
+        print(raw_token)
+        session['token'] = raw_token['access_token']
+        session['user_id'] = raw_token['user_id']
         return redirect(url_for('successful'))
     except KeyError:
+        if 'error' in raw_token:
+            session['error'] = raw_token['error']
         return redirect(url_for('failed'))
 
 
 @app.route("/success")
 def successful():
     print("Token: {}".format(session['token']))
-    user = User(token=session['token']['access_token'], id=session['token']['user_id'])
+    user = User(token=session['token'], id=session['user_id'])
     return "Current user: {}\nStatus: {}\nEmoji: {}".format(user.id, user.status(), user.emoji())
 
 
 @app.route("/failure")
 def failed():
-    return "Authorization failed!"
+    if 'error' in session:
+        return "Authorization failed! Error: {}".format(sesion['error'])
+    return "Authorization failed due to unknown error!"
+
+@app.route("/unavailable")
+    return "Service unavailable (is Slack down?)"
 
 
 def make_celery(app):
