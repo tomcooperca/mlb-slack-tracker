@@ -27,9 +27,9 @@ def authorize():
         response = t.generate_token()
         if not response:
             return redirect(url_for('unavailable'))
-        print(raw_token)
-        session['token'] = raw_token['access_token']
-        session['user_id'] = raw_token['user_id']
+        print(response)
+        session['token'] = response['access_token']
+        session['user_id'] = response['user_id']
         return redirect(url_for('successful'))
     except KeyError:
         if 'error' in raw_token:
