@@ -1,4 +1,5 @@
-[![Build Status](https://travis-ci.org/tomcooperca/mlb-slack-tracker.svg?branch=master)](https://travis-ci.org/tomcooperca/mlb-slack-tracker)
+[![Build Status](https://travis-ci.org/tomcooperca/mlb-slack-tracker.svg?branch=master)](https://travis-ci.org/tomcooperca/mlb-slack-tracker)  
+
 Track your favorite MLB team in Slack!
 
 # Features
