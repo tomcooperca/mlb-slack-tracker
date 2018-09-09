@@ -282,6 +282,7 @@
         },
         "hypothesis": {
             "hashes": [
+                "sha256:2c4f159c6a2d5210073834db046b01fbf8946888efe31c158e281e488d1881d4",
                 "sha256:5507518774f1d9a55ef4728005387fa5984b232f4daa86b9dd5d12d30e6bdfcc",
                 "sha256:97ca8ca58ed2cd60ea0234e9a2ed9745dbf3917411b08115c2b41a8d9be4c312"
             ],

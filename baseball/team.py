@@ -1,52 +1,71 @@
 import mlbgame
 
-# Represents an MLB team, with current state of its games, standings, etc.
 class Team:
-    def __init__(self, name):
-        self.name = name
-        self.divisions = mlbgame.standings().divisions
+    def __init__(self, full_name, abbreviation, location, wins, losses, record, division):
+        self.full_name = full_name
+        self.abbreviation = abbreviation
+        self.location = location
+        self.wins = wins
+        self.losses = losses
+        self.record = record
+        self.division = division
+
+class TeamFinder:
+    def __init__(self, divisions, abbreviation=None, full_name=None, location=None):
+        self.abbreviation = abbreviation
+        self.full_name = full_name
+        self.location = location
+        self.divisions = divisions
+        self.mlb_team = None
+
+    def log_team_not_found_error(self):
+        errors = ""
+        if self.abbreviation:
+            errors += self.abbreviation
+        if self.location:
+            errors += "/ {}".format(self.location)
+        if self.full_name:
+            errors += "/ {}".format(self.full_name)
+        print('No team found for {}'.format(errors))
+
+
+    def list_all_team_abbrevs(self):
         abbrevs = []
         for division in self.divisions:
             for team in division.teams:
                 abbrevs.append(team.team_abbrev)
-        self.abbrevs = abbrevs
+        return abbrevs
 
-    def find_team_by_abbrev(self, abbrev):
+    def populate(self):
+        find_team(self)
+        if self.mlb_team:
+            self.populate_team()
+
+
+    def find_team(self):
         for division in self.divisions:
             for team in division.teams:
-                if team.team_abbrev == abbrev:
-                    return team
-        return None
+                if self.abbreviation and self.abbreviation == team.team_abbrev:
+                    self.mlb_team = team
+                    self.populate_team()
+                elif self.full_name and self.full in team.team_full:
+                    self.mlb_team = team
+                    self.populate_team()
+                elif self.location and self.location in team.team_full:
+                    self.mlb_team = team
+                    self.populate_team()
+                elif self.location and self.location in team.team_short:
+                    self.mlb_team = team
+                    self.populate_team()
+                else:
+                    continue
 
 
-    def find_team_by_full_name(self, full_name):
-        for division in self.divisions:
-            for team in division.teams:
-                if team.team_full == full_name:
-                    return team
-        return None
-
-
-    def find_team_by_name(self, name):
-        for division in self.divisions:
-            for team in division.teams:
-                if name in team.team_full:
-                    return team
-        return None
-
-
-    def find_divison_by_abbrev(self, abbrev):
-        for division in self.divisions:
-            for team in division.teams:
-                if team.team_abbrev == abbrev:
-                    return division
-        return None
-
-
-    def valid_team(self, abbrev):
-        found_team = False
-        for division in self.divisions:
-            for team in division.teams:
-                if team.team_abbrev == abbrev:
-                    found_team = True
-        return found_team
+    def populate_team(self):
+        self.team = Team(full_name=self.mlb_team.team_full,
+                        abbreviation=self.mlb_team.team_abbrev,
+                        location=self.mlb_team.team_short,
+                        wins=self.mlb_team.w,
+                        losses=self.mlb_team.l,
+                        record="{}-{}".format(self.mlb_team.w, self.mlb_team.l),
+                        division=self.mlb_team.division)
