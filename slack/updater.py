@@ -18,8 +18,6 @@ class StatusUpdater:
             'Authorization': 'Bearer {}'.format(self.token),
             'Content-Type': 'application/json'
         }
-        self.profile = requests.get('{}/users.profile.get'.format(self.slack_url),
-                                headers=self.default_headers, verify=self.ssl_verify).json()
 
 
     def update_status(self, status=None):
@@ -35,7 +33,14 @@ class StatusUpdater:
                                  headers=self.default_headers, verify=self.ssl_verify)
 
     def display_status_emot(self):
-        return self.profile['profile']['status_emoji']
+        return self.get_profile()['profile']['status_emoji']
 
     def display_status(self):
-        return self.profile['profile']['status_text']
+        return self.get_profile()['profile']['status_text']
+
+    def display_email(self):
+        return self.get_profile()['profile']['email']
+
+    def get_profile(self):
+        return requests.get('{}/users.profile.get'.format(self.slack_url),
+                                headers=self.default_headers, verify=self.ssl_verify).json()
