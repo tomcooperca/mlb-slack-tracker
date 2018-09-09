@@ -10,6 +10,7 @@ mlbgame = "*"
 celery = "*"
 gunicorn = "*"
 pytest = "*"
+sqlalchemy = "*"
 
 [dev-packages]
 pytest = "*"
