@@ -25,7 +25,7 @@ class StatusUpdater:
         print("Updating status of {} to \"{}\"".format(self.id, status))
         current_emot = self.display_status_emot()
         today_utc = datetime.now().replace(tzinfo=timezone.utc)
-        next_week_timestamp = int((today + timedelta(days=7)).timestamp())
+        next_week_timestamp = int((today_utc + timedelta(days=7)).timestamp())
         update = {
             'profile': {
                 'status_text': status if status else self.display_status(),

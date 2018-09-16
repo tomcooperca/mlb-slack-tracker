@@ -39,7 +39,7 @@ if json_indent_env:
 
 
 @app.route("/")
-def hello():
+def add_to_slack():
     return app.send_static_file("slack_button.html")
 
 
@@ -72,7 +72,7 @@ def authorize():
             session['error'] = response['error']
 
 
-@app.route("/setup", methods=['GET', 'POST'])
+@app.route("/config", methods=['GET', 'POST'])
 def setup():
     from form import SetupForm
     setup = SetupForm()
