@@ -25,6 +25,7 @@ db.session.commit()
 # mlb data
 divisions = mlbgame.standings().divisions
 teams = []
+team_form_choices = []
 
 # json
 json_sorted = False
@@ -75,13 +76,13 @@ def authorize():
 def setup():
     from form import SetupForm
     setup = SetupForm()
-    setup.team.choices = [(i, val) for i, val in enumerate(list_team_abbreviations())]
+    setup.team.choices = team_form_choices
     if 'current_user' in session:
         setup.user_id.data = session['current_user']
 
     if setup.validate_on_submit():
         u = UserModel.query.filter_by(user_id=setup.user_id.data).first()
-        u.team = setup.team.data
+        u.team = setup.team.data[1]
         db.session.commit()
         if setup.update_now.data:
             slackuser = User(token=u.token, id=u.user_id, team=find_by_abbreviation(u.team))
@@ -112,7 +113,7 @@ def unavailable():
 @app.before_first_request
 def first_things_first():
     populate_teams(divisions)
-
+    team_form_choices = [(i, val) for i, val in enumerate(list_team_abbreviations())]
 
 @app.route("/team/abbreviations")
 def list_team_abbreviations():
