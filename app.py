@@ -15,6 +15,7 @@ if os.getenv('DATABASE_URL'):
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 else:
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 db = SQLAlchemy(app)
 
 from models import UserModel
@@ -72,17 +73,16 @@ def authorize():
 def setup():
     from form import SetupForm
     setup = SetupForm()
-    setup.team.choices = list_team_abbreviations()
+    setup.team.choices = [(i, val) for i, val in enumerate(list_team_abbreviations())]
     if 'current_user' in session:
         setup.user_id.data = session['current_user']
 
-    if setup.validate_on_submit() and 'current_user' in session:
-        u = UserModel.query.filter_by(user_id=session['current_user'])
+    if setup.validate_on_submit():
+        u = UserModel.query.filter_by(user_id=setup.user_id.data)
         u.team = setup.team.data
         db.session.commit()
         return redirect(url_for('current_user'))
     return render_template('setup.html', title='Setup MLB team', form=setup)
-    # return "Current user: {}<br/>Status: {}<br/>Emoji: {}".format(user.id, user.status(), user.emoji())
 
 
 @app.route("/user/<id>")
@@ -101,21 +101,21 @@ def failed():
 @app.route("/unavailable")
 def unavailable():
     return "Service unavailable (is Slack down?)"
-    create_req_table()
+
+
+@app.before_first_request
+def first_things_first():
+    populate_teams(divisions)
 
 
 @app.route("/team/abbreviations")
 def list_team_abbreviations():
-    # if len(teams) == 0:
-    #     populate_teams(divisions)
     return app.response_class(json.dumps(list_team_abbreviations(),
             sort_keys=json_sorted, indent=json_indent), mimetype='application/json')
 
 
 @app.route("/team/all")
 def list_teams():
-    # if len(teams) == 0:
-    #     populate_teams(divisions)
     return app.response_class(json.dumps(teams, default=serialize_team, sort_keys=json_sorted, indent=json_indent),
             mimetype='application/json')
 
@@ -136,10 +136,6 @@ def list_team_abbreviations():
 def serialize_division(division):
     type(division)
     return division.name
-    # division_names_list = []
-    # for div in divisions:
-        # division_names_list.append(div.name)
-    # return division_names_list
 
 
 def serialize_team(team):
