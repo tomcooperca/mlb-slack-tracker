@@ -17,3 +17,13 @@ class User():
 
     def emoji(self):
         return self.su.display_status_emot()
+
+    # Different flavors of status:
+    # MYTEAM@OTHER | 1W-2L | 1st in AL East
+    def simple_team_and_standings(self):
+        # City Name Players | 0W - 0L | AL East
+        status = "{} | {} | {}".format(
+            self.team.full_name,
+            self.team.record,
+            self.team.division)
+        self.su.update_status(status=status)
