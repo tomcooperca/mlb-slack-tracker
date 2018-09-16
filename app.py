@@ -2,22 +2,24 @@ import mlbgame
 from baseball.team import TeamFinder
 from slack.token import Token
 from slack.user import User
-from flask import Flask, redirect, url_for, session, request
-from celery import Celery
-import sqlite3
-from sqlalchemy import Column, ForeignKey, Integer, String
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
-from sqlalchemy import create_engine
+from flask import Flask, redirect, url_for, session, request, render_template
+from flask_sqlalchemy import SQLAlchemy
 import json
 import os
 
 app = Flask(__name__, static_url_path='')
-app.config['SECRET_KEY'] = '7ce9431ef410e9fb730e140f290abd0b69e2568515b27644'
-if os.getenv('DATABASE_CONNECT'):
-    conn = sqlite3.connect(os.getenv('DATABASE_CONNECT'))
+app.config['SECRET_KEY'] = os.environ['FLASK_SECRET_KEY']
+
+# Database setup
+if os.getenv('SQLALCHEMY_DATABASE_URI'):
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
 else:
-    conn = sqlite3.connect('test.db')
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+db = SQLAlchemy(app)
+
+from models import UserModel
+db.create_all()
+db.session.commit()
 
 # mlb data
 divisions = mlbgame.standings().divisions
@@ -33,11 +35,6 @@ if json_sorted_env:
 if json_indent_env:
     json_indent = int(os.getenv('JSON_INDENT'))
 
-# app.config.update(
-#     CELERY_BROKER_URL='redis://localhost:6379',
-#     CELERY_RESULT_BACKEND='redis://localhost:6379'
-# )
-# celery = make_celery(app)
 
 @app.route("/")
 def hello():
@@ -51,72 +48,76 @@ def authorize():
             request.args.get('redirect_uri'),
             os.environ['SLACK_CLIENT_ID'],
             os.environ['SLACK_CLIENT_SECRET'])
+    except KeyError:
+        session['error'] = 'Missing required params during authorization!'
+        return redirect(url_for('failed'))
+
+    try:
         response = t.generate_token()
         if not response:
             return redirect(url_for('unavailable'))
         print(response)
-        session['token'] = response['access_token']
-        session['user_id'] = response['user_id']
-        return redirect(url_for('successful'))
+        db.session.add(UserModel(username=response['user_id'], token=response['access_token']))
+        db.session.commit()
+        session['current_user'] = response['user_id']
+        return redirect(url_for('setup'))
     except KeyError:
-        if 'error' in raw_token:
-            session['error'] = raw_token['error']
-        return redirect(url_for('failed'))
+        if 'error' in response:
+            session['error'] = response['error']
 
 
-@app.route("/success")
-def successful():
-    print("Token: {}".format(session['token']))
-    user = User(token=session['token'], id=session['user_id'])
-    write_user_to_db
-    return "Current user: {}<br/>Status: {}<br/>Emoji: {}".format(user.id, user.status(), user.emoji())
+@app.route("/setup", methods=['GET', 'POST'])
+def setup():
+    from form import SetupForm
+    setup = SetupForm()
+    if setup.validate_on_submit() and 'current_user' in session:
+        u = UserModel.query.filter_by(user_id=session['current_user'])
+        u.team = setup.team.data
+        db.session.commit()
+        return redirect(url_for('current_user'))
+    return render_template('setup.html', title='Setup MLB team', form=setup)
+    # return "Current user: {}<br/>Status: {}<br/>Emoji: {}".format(user.id, user.status(), user.emoji())
+
+
+@app.route("/user/<id>")
+def current_user(id):
+    um = UserModel.query.filter_by(user_id=id)
+    return um
 
 
 @app.route("/failure")
 def failed():
     if 'error' in session:
-        return "Authorization failed! Error: {}".format(sesion['error'])
+        return "Authorization failed! Error: {}".format(session['error'])
     return "Authorization failed due to unknown error!"
+
 
 @app.route("/unavailable")
 def unavailable():
     return "Service unavailable (is Slack down?)"
+    create_req_table()
+
 
 @app.route("/team/abbreviations")
 def list_team_abbreviations():
-    if len(teams) == 0:
-        populate_teams(divisions)
+    # if len(teams) == 0:
+    #     populate_teams(divisions)
     return app.response_class(json.dumps(list_team_abbreviations(),
             sort_keys=json_sorted, indent=json_indent), mimetype='application/json')
 
+
 @app.route("/team/all")
 def list_teams():
-    if len(teams) == 0:
-        populate_teams(divisions)
+    # if len(teams) == 0:
+    #     populate_teams(divisions)
     return app.response_class(json.dumps(teams, default=serialize_team, sort_keys=json_sorted, indent=json_indent),
             mimetype='application/json')
+
 
 @app.route("/division/all")
 def list_divisons():
     return app.response_class(json.dumps(divisions, default=serialize_division,
             sort_keys=json_sorted, indent=json_indent), mimetype='application/json')
-
-def make_celery(app):
-    celery = Celery(
-        app.import_name,
-        backend=app.config['CELERY_RESULT_BACKEND'],
-        broker=app.config['CELERY_BROKER_URL']
-    )
-    celery.conf.update(app.config)
-
-    class ContextTask(celery.Task):
-        def __call__(self, *args, **kwargs):
-            with app.app_context():
-                return self.run(*args, **kwargs)
-
-    celery.Task = ContextTask
-    return celery
-
 
 
 def list_team_abbreviations():
@@ -139,18 +140,6 @@ def serialize_team(team):
     return team.__dict__
 
 
-def create_req_table():
-    conn.execute('''CREATE TABLE user_db
-                    (id integer PRIMARY KEY AUTOINCREMENT, user_id varchar(128) NOT NULL,
-                    email varchar(128) NOT NULL, token varchar(1024) NOT NULL, team varchar(50))
-                    IF NOT EXISTS;
-    ''')
-    conn.commit()
-
-def write_user_to_db(user):
-    conn.execute("INSERT INTO user_db VALUES ({}, {}, {})".format(user.id, user.display_email(), user.token))
-    conn.commit()
-
 def populate_teams(divisions):
     for division in divisions:
         for team in division.teams:
@@ -162,5 +151,4 @@ def populate_teams(divisions):
 
 if __name__ == "__main__":
     populate_teams(divisions)
-    create_req_table()
     app.run()
