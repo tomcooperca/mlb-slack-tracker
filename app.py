@@ -81,7 +81,7 @@ def setup():
         u = UserModel.query.filter_by(user_id=setup.user_id.data)
         u.team = setup.team.data
         db.session.commit()
-        return redirect(url_for('current_user'))
+        return redirect(url_for('current_user', id=u.user_id))
     return render_template('setup.html', title='Setup MLB team', form=setup)
 
 
