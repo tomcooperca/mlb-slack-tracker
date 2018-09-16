@@ -82,7 +82,7 @@ def setup():
 
     if setup.validate_on_submit():
         u = UserModel.query.filter_by(user_id=setup.user_id.data).first()
-        u.team = setup.team.data[1]
+        u.team = setup.team.data[0]
         db.session.commit()
         if setup.update_now.data:
             slackuser = User(token=u.token, id=u.user_id, team=find_by_abbreviation(u.team))
@@ -113,7 +113,8 @@ def unavailable():
 @app.before_first_request
 def first_things_first():
     populate_teams(divisions)
-    team_form_choices = [(i, val) for i, val in enumerate(list_team_abbreviations())]
+    for team in teams:
+        team_form_choices.append((team.abbreviation, team.full_name))
 
 @app.route("/team/abbreviations")
 def list_team_abbreviations():
