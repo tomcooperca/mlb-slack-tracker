@@ -9,4 +9,6 @@ class UserModel(db.Model):
     team = db.Column(db.String(50))
 
     def __repr__(self):
-        return '<User %r>' % self.username
+        if self.team:
+            return '<User {}, team {}>'.format(self.user_id, self.team)
+        return '<User {}}>'.format(self.user_id)

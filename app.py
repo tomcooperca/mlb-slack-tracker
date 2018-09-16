@@ -78,20 +78,21 @@ def setup():
         setup.user_id.data = session['current_user']
 
     if setup.validate_on_submit():
-        u = UserModel.query.filter_by(user_id=setup.user_id.data)
+        u = UserModel.query.filter_by(user_id=setup.user_id.data).first()
         u.team = setup.team.data
+        slacktoken = u.token
+        slackid = u.user_id
         db.session.commit()
         if setup.update_now.data:
             slackuser = User(token=u.token, id=u.user_id, team=find_by_abbreviation(u.team))
             slackuser.simple_team_and_standings()
-
         return redirect(url_for('current_user', id=u.user_id))
     return render_template('setup.html', title='Setup MLB team', form=setup)
 
 
 @app.route("/user/<id>")
 def current_user(id):
-    um = UserModel.query.filter_by(user_id=id)
+    um = UserModel.query.filter_by(user_id=id).first()
     return um
 
 
