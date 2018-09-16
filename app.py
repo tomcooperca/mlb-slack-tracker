@@ -70,6 +70,10 @@ def authorize():
 def setup():
     from form import SetupForm
     setup = SetupForm()
+    setup.team.choices = list_team_abbreviations()
+    if 'current_user' in session:
+        setup.user_id.data = session['current_user']
+
     if setup.validate_on_submit() and 'current_user' in session:
         u = UserModel.query.filter_by(user_id=session['current_user'])
         u.team = setup.team.data
