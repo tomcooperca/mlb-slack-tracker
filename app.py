@@ -84,7 +84,9 @@ def setup():
         slackid = u.user_id
         db.session.commit()
         if setup.update_now.data:
-            slackuser = User(token=u.token, id=u.user_id, team=find_by_abbreviation(u.team))
+            tf = TeamFinder(abbreviation=u.team)
+            tf.find_team()
+            slackuser = User(token=u.token, id=u.user_id, team=tf.team)
             slackuser.simple_team_and_standings()
         return redirect(url_for('current_user', id=u.user_id))
     return render_template('setup.html', title='Setup MLB team', form=setup)
