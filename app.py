@@ -82,7 +82,7 @@ def setup():
 
     if setup.validate_on_submit():
         u = UserModel.query.filter_by(user_id=setup.user_id.data).first()
-        u.team = setup.team.data[0]
+        u.team = setup.team.data
         db.session.commit()
         if setup.update_now.data:
             slackuser = User(token=u.token, id=u.user_id, team=find_by_abbreviation(setup.team.data[0]))
