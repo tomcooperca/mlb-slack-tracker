@@ -12,6 +12,7 @@ gunicorn = "*"
 pytest = "*"
 flask-sqlalchemy = "*"
 flask-wtf = "*"
+"psycopg2" = "*"
 
 [dev-packages]
 pytest = "*"

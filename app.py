@@ -11,8 +11,8 @@ app = Flask(__name__, static_url_path='')
 app.config['SECRET_KEY'] = os.environ['FLASK_SECRET_KEY']
 
 # Database setup
-if os.getenv('SQLALCHEMY_DATABASE_URI'):
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
+if os.getenv('DATABASE_URL'):
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 else:
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 db = SQLAlchemy(app)
