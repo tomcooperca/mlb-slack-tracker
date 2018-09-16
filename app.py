@@ -63,7 +63,7 @@ def authorize():
             db.session.add(UserModel(user_id=response['user_id'], token=response['access_token']))
         else:
             um.token = response['access_token']
-        db.session.commit()    
+        db.session.commit()
         session['current_user'] = response['user_id']
         return redirect(url_for('setup'))
     except KeyError:
@@ -82,13 +82,9 @@ def setup():
     if setup.validate_on_submit():
         u = UserModel.query.filter_by(user_id=setup.user_id.data).first()
         u.team = setup.team.data
-        slacktoken = u.token
-        slackid = u.user_id
         db.session.commit()
         if setup.update_now.data:
-            tf = TeamFinder(abbreviation=u.team)
-            tf.find_team()
-            slackuser = User(token=u.token, id=u.user_id, team=tf.team)
+            slackuser = User(token=slacktoken, id=slackid, team=find_by_abbreviation(u.team))
             slackuser.simple_team_and_standings()
         return redirect(url_for('current_user', id=u.user_id))
     return render_template('setup.html', title='Setup MLB team', form=setup)
