@@ -57,7 +57,7 @@ def authorize():
         if not response:
             return redirect(url_for('unavailable'))
         print(response)
-        db.session.add(UserModel(username=response['user_id'], token=response['access_token']))
+        db.session.add(UserModel(user_id=response['user_id'], token=response['access_token']))
         db.session.commit()
         session['current_user'] = response['user_id']
         return redirect(url_for('setup'))
