@@ -10,3 +10,5 @@ env:
 install: make setup
 # # command to run tests
 script: make test
+notifications:
+  email: false
