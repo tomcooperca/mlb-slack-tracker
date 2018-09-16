@@ -82,7 +82,7 @@ def setup():
         u.team = setup.team.data
         db.session.commit()
         if setup.update_now.data:
-            slackuser = User(token=u.token=, id=u.user_id, team=u.team)
+            slackuser = User(token=u.token, id=u.user_id, team=find_by_abbreviation(u.team))
             slackuser.simple_team_and_standings()
 
         return redirect(url_for('current_user', id=u.user_id))
@@ -135,6 +135,13 @@ def list_team_abbreviations():
     for team in teams:
         abbreviations.append(team.abbreviation)
     return abbreviations
+
+
+def find_by_abbreviation(abbreviation):
+    for team in teams:
+        if team.abbreviation == abbreviation:
+            return team
+    return None
 
 
 def serialize_division(division):
