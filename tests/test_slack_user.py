@@ -1,10 +1,10 @@
 from unittest.mock import MagicMock
 from slack.user import User
 
-reusableUser = User(token='blah', id='UB00123')
+reusableUser = User(token='blah', id='UB00123', team=None)
 
 def test_init():
-    u = User(token='gooblygook', id='ABC123')
+    u = User(token='gooblygook', id='ABC123', team=None)
     assert u.id == 'ABC123'
 
 def test_status_calls_updater():
