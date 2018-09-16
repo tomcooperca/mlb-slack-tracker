@@ -1,11 +1,11 @@
 from baseball.team import Team
 from slack.updater import StatusUpdater
+from datetime import datetime
 
 class User():
-    def __init__(self, token, id, email='inbox@example.com', team=None, created_date=None):
+    def __init__(self, token, id, team=None, created_date=datetime.now()):
         self.token = token
         self.id = id
-        self.email = email
         self.team = team
         self.created_date = created_date
         self.su = StatusUpdater(id, token)

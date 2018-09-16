@@ -93,7 +93,8 @@ def setup():
 @app.route("/user/<id>")
 def current_user(id):
     um = UserModel.query.filter_by(user_id=id).first()
-    return um
+    slackuser = User(id=um.user_id, token=um.token, team=find_by_abbreviation(um.team))
+    return render_template('user.html', user=slackuser, status=slackuser.status(), emoji=slackuser.emoji())
 
 
 @app.route("/failure")
