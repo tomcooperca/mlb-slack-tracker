@@ -44,7 +44,7 @@ class User():
 
         status = "{} {}| {} | #{} in {}".format(
             self.team.todays_game_text,
-            score if score else '',
+            "({}) ".format(score) if score else '',
             self.team.record,
             self.team.standing,
             self.team.division)

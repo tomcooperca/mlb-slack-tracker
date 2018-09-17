@@ -47,3 +47,11 @@ def test_todays_game_and_standings_status():
     u.su.update_status = MagicMock()
     u.todays_game_and_standings()
     u.su.update_status.assert_called_once_with(status=expected)
+
+
+def test_todays_game_score_and_standings_status():
+    expected = 'CN@BOB (Final: 1-0) | 0W-162L | #5 in CL Beast'
+    u = User(token='blah', id='UB00123', team=testTeam)
+    u.su.update_status = MagicMock()
+    u.todays_game_score_and_standings()
+    u.su.update_status.assert_called_once_with(status=expected)
