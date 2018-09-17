@@ -149,7 +149,6 @@ def find_by_abbreviation(abbreviation):
 
 
 def serialize_division(division):
-    type(division)
     return division.name
 
 

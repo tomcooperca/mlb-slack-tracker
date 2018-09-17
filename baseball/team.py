@@ -1,7 +1,9 @@
-import mlbgame
+from mlbgame import mlbgame
+from datetime import datetime
 
 class Team:
-    def __init__(self, full_name, abbreviation, location, wins, losses, record, division, standing):
+    def __init__(self, full_name, abbreviation, location, wins, losses, record,
+    division, standing, todays_game_text, todays_game_score):
         self.full_name = full_name
         self.abbreviation = abbreviation
         self.location = location
@@ -10,14 +12,18 @@ class Team:
         self.record = record
         self.division = division
         self.standing = standing
+        self.todays_game_text = todays_game_text
+        self.todays_game_score = todays_game_score
 
-class TeamFinder:
+class TeamMapper:
     def __init__(self, divisions, abbreviation=None, full_name=None, location=None):
         self.abbreviation = abbreviation
         self.full_name = full_name
         self.location = location
         self.divisions = divisions
         self.mlb_team = None
+        self.todays_games = mlbgame.day(datetime.now().year,
+            datetime.now().month, datetime.now().day)
 
     def log_team_not_found_error(self):
         errors = ""
@@ -62,9 +68,44 @@ class TeamFinder:
                     continue
 
 
+    def find_team_by_name(self, name):
+        for division in self.divisions:
+            for team in division.teams:
+                if name in team.team_full:
+                    return team
+        return None
+
+
     def convert_division_to_short_name(self):
         return (self.mlb_team.division.replace('National League', 'NL')
-                       .replace('American League', 'AL'))
+                                        .replace('American League', 'AL'))
+
+
+    def find_todays_game_text(self):
+        game_text = "Off-Day"
+        for game in self.todays_games:
+            # GameScoreboard
+            if game.home_team in self.mlb_team.team_full:
+                other_team = self.find_team_by_name(name=game.away_team)
+                game_text = '{}@{}'.format(other_team.team_abbrev, self.mlb_team.team_abbrev)
+            if game.away_team in self.mlb_team.team_full:
+                other_team = self.find_team_by_name(name=game.home_team)
+                game_text = '{}@{}'.format(self.mlb_team.team_abbrev, other_team.team_abbrev)
+        return game_text
+
+
+    def find_todays_game_score(self, home_team_name=None, away_team_name=None):
+        score = None
+        for game in self.todays_games:
+            if game.home_team in home_team_name and game.game_status == 'FINAL':
+                score = self.format_score(game)
+            if game.away_team in away_team_name and game.game_status == 'FINAL':
+                score = self.format_score(game)
+        return score
+
+
+    def format_score(self, game):
+        return " (Final: {}-{})".format(game.away_team_runs, game.home_team_runs)
 
 
     def populate_team(self):
@@ -75,4 +116,6 @@ class TeamFinder:
                         losses=self.mlb_team.l,
                         record="{}W-{}L".format(self.mlb_team.w, self.mlb_team.l),
                         division=self.convert_division_to_short_name(),
-                        standing=self.mlb_team.place)
+                        standing=self.mlb_team.place,
+                        todays_game_text=self.find_todays_game_text(),
+                        todays_game_score=self.find_todays_game_score(home_team_name=self.mlb_team.team_full, away_team_name=self.mlb_team.team_full))
