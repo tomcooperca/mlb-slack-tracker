@@ -5,7 +5,8 @@ from baseball.team import Team
 reusableUser = User(token='blah', id='UB00123', team=None)
 testTeam = Team(abbreviation='CN', location='City Name',
     full_name='City Name Players', record='0W-162L', division='CL Beast',
-    wins=0, losses=162, standing=5)
+    wins=0, losses=162, standing=5, todays_game_text='CN@BOB',
+    todays_game_score='1-0')
 
 def test_init():
     u = User(token='gooblygook', id='ABC123', team=None)

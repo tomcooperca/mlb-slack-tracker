@@ -44,7 +44,7 @@ class TeamMapper:
         return abbrevs
 
     def populate(self):
-        find_team(self)
+        self.find_team()
         if self.mlb_team:
             self.populate_team()
 
@@ -81,16 +81,29 @@ class TeamMapper:
                                         .replace('American League', 'AL'))
 
 
+    def correct_for_dbacks(self, game_team_name):
+        """
+        Arizona Diamondbacks in mlbgame.standings().divisions[...].team_short
+        does not match D-backs in GameScoreboards - open a GH issue with mlbgame
+        because they really should be unified.
+        """
+        if game_team_name == 'D-backs':
+            return 'Diamondbacks'
+        return game_team_name
+
+
     def find_todays_game_text(self):
         game_text = "Off-Day"
         for game in self.todays_games:
             # GameScoreboard
             if game.home_team in self.mlb_team.team_full:
-                other_team = self.find_team_by_name(name=game.away_team)
-                game_text = '{}@{}'.format(other_team.team_abbrev, self.mlb_team.team_abbrev)
+                real_team_name = self.correct_for_dbacks(game.away_team)
+                other_team = self.find_team_by_name(name=real_team_name)
+                game_text = self.format_home_team(away_team=other_team.team_abbrev)
             if game.away_team in self.mlb_team.team_full:
-                other_team = self.find_team_by_name(name=game.home_team)
-                game_text = '{}@{}'.format(self.mlb_team.team_abbrev, other_team.team_abbrev)
+                real_team_name = self.correct_for_dbacks(game.home_team)
+                other_team = self.find_team_by_name(name=real_team_name)
+                game_text = self.format_away_team(home_team=other_team.team_abbrev)
         return game_text
 
 
@@ -105,7 +118,15 @@ class TeamMapper:
 
 
     def format_score(self, game):
-        return " (Final: {}-{})".format(game.away_team_runs, game.home_team_runs)
+        return "{}-{}".format(game.away_team_runs, game.home_team_runs)
+
+
+    def format_home_team(self, away_team):
+        return "{}@{}".format(away_team, self.mlb_team.team_abbrev)
+
+
+    def format_away_team(self, home_team):
+        return "{}@{}".format(self.mlb_team.team_abbrev, home_team)
 
 
     def populate_team(self):
