@@ -23,8 +23,8 @@ def test_convert_division_long_name_to_short():
     assert tf.convert_division_to_short_name() == 'Baseball League'
 
 
-def test_game_text_and_score():
 # TODO: figure out a good way to fixture mlbgame.standings().divisions and mlbgame.day(today).games
+# def test_game_text_and_score():
     # tf = TeamMapper(divisions=mlbgame.mlbgame.standings().divisions, abbreviation='TOR')
 #     tf.todays_games = Fixtures.GAMES_FIXTURE
 #     mocked_team = MagicMock()
