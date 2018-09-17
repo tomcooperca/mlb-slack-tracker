@@ -1,7 +1,8 @@
 <h1>Current user config</h1>
-<table>
+<table border="1">
   <tr><td>User Id</td><td>{{ user.id }}</td></tr>
   <tr><td>Team</td><td>{{ user.team.full_name }}</td></tr>
   <tr><td>Status</td><td>{{ status }}</td></tr>
   <tr><td>Emoji</td><td>{{ emoji }}</td></tr>
 </table>
+<p><a href="{{ url_for('setup') }}">Reconfigure my user settings</a></p>

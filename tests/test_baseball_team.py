@@ -1,11 +1,11 @@
-from baseball.team import TeamFinder
+from baseball.team import TeamMapper
 
 def test_convert_division_long_name_to_short():
     class DummyTeam():
         def __init__(self, division=None):
             self.division = division
 
-    tf = TeamFinder(divisions=None)
+    tf = TeamMapper(divisions=None)
 
     dummy = DummyTeam(division='American League')
     tf.mlb_team = dummy

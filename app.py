@@ -1,5 +1,5 @@
 import mlbgame
-from baseball.team import TeamFinder
+from baseball.team import TeamMapper
 from slack.token import Token
 from slack.user import User
 from flask import Flask, redirect, url_for, session, request, render_template
@@ -160,7 +160,7 @@ def serialize_team(team):
 def populate_teams(divisions):
     for division in divisions:
         for team in division.teams:
-            t = TeamFinder(divisions, abbreviation=team.team_abbrev)
+            t = TeamMapper(divisions, abbreviation=team.team_abbrev)
             t.find_team()
             teams.append(t.team)
     return teams

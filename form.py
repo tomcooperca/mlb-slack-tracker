@@ -4,7 +4,7 @@ from wtforms import StringField, SelectField, SubmitField, BooleanField
 from wtforms.validators import Required
 
 class SetupForm(FlaskForm):
-    user_id = StringField('User ID')
+    user_id = StringField('Email')
     team = SelectField('Team', coerce=str, validators = [Required()])
     update_now = BooleanField('Update Status now')
-    submit = SubmitField('Sign In')
+    submit = SubmitField('Save')
