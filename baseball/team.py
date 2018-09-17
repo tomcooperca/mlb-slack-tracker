@@ -1,7 +1,7 @@
 import mlbgame
 
 class Team:
-    def __init__(self, full_name, abbreviation, location, wins, losses, record, division):
+    def __init__(self, full_name, abbreviation, location, wins, losses, record, division, standing):
         self.full_name = full_name
         self.abbreviation = abbreviation
         self.location = location
@@ -9,6 +9,7 @@ class Team:
         self.losses = losses
         self.record = record
         self.division = division
+        self.standing = standing
 
 class TeamFinder:
     def __init__(self, divisions, abbreviation=None, full_name=None, location=None):
@@ -61,11 +62,17 @@ class TeamFinder:
                     continue
 
 
+    def convert_division_to_short_name(self):
+        return (self.mlb_team.division.replace('National League', 'NL')
+                       .replace('American League', 'AL'))
+
+
     def populate_team(self):
         self.team = Team(full_name=self.mlb_team.team_full,
                         abbreviation=self.mlb_team.team_abbrev,
                         location=self.mlb_team.team_short,
                         wins=self.mlb_team.w,
                         losses=self.mlb_team.l,
-                        record="{}-{}".format(self.mlb_team.w, self.mlb_team.l),
-                        division=self.mlb_team.division)
+                        record="{}W-{}L".format(self.mlb_team.w, self.mlb_team.l),
+                        division=self.convert_division_to_short_name(),
+                        standing=self.mlb_team.place)
