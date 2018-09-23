@@ -16,14 +16,13 @@ class Team:
         self.todays_game_score = todays_game_score
 
 class TeamMapper:
-    def __init__(self, divisions, abbreviation=None, full_name=None, location=None):
+    def __init__(self, divisions, todays_games, abbreviation=None, full_name=None, location=None):
+        self.divisions = divisions
+        self.todays_games = todays_games
         self.abbreviation = abbreviation
         self.full_name = full_name
         self.location = location
-        self.divisions = divisions
         self.mlb_team = None
-        self.todays_games = mlbgame.day(datetime.now().year,
-            datetime.now().month, datetime.now().day)
 
     def log_team_not_found_error(self):
         errors = ""
@@ -84,8 +83,8 @@ class TeamMapper:
     def correct_for_dbacks(self, game_team_name):
         """
         Arizona Diamondbacks in mlbgame.standings().divisions[...].team_short
-        does not match D-backs in GameScoreboards - open a GH issue with mlbgame
-        because they really should be unified.
+        does not match D-backs in GameScoreboards.
+        see
         """
         if game_team_name == 'D-backs':
             return 'Diamondbacks'

@@ -157,9 +157,10 @@ def serialize_team(team):
 
 
 def populate_teams(divisions):
+    todays_games = mlbgame.day(datetime.now().year, datetime.now().month, datetime.now().day)
     for division in divisions:
         for team in division.teams:
-            t = TeamMapper(divisions, abbreviation=team.team_abbrev)
+            t = TeamMapper(divisions, todays_games, abbreviation=team.team_abbrev)
             t.find_team()
             teams.append(t.team)
     return teams
