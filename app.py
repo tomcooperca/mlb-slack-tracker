@@ -23,7 +23,7 @@ db.create_all()
 db.session.commit()
 
 # mlb data
-divisions = mlbgame.standings().divisions
+divisions = None
 teams = []
 team_form_choices = []
 
@@ -112,7 +112,7 @@ def unavailable():
 
 @app.before_first_request
 def first_things_first():
-    populate_teams(divisions)
+    populate_data()
     for team in teams:
         team_form_choices.append((team.abbreviation, team.full_name))
 
@@ -156,7 +156,8 @@ def serialize_team(team):
     return team.__dict__
 
 
-def populate_teams(divisions):
+def populate_data():
+    divisions = mlbgame.standings().divisions
     todays_games = mlbgame.day(datetime.now().year, datetime.now().month, datetime.now().day)
     for division in divisions:
         for team in division.teams:
@@ -167,5 +168,4 @@ def populate_teams(divisions):
 
 
 if __name__ == "__main__":
-    populate_teams(divisions)
     app.run()
