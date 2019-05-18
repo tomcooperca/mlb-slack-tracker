@@ -1,4 +1,4 @@
-Track your favorite MLB team in Slack!
+# Track your favorite MLB team in Slack!
 [![CircleCI](https://circleci.com/gh/tomcooperca/mlb-slack-tracker.svg?style=svg)](https://circleci.com/gh/tomcooperca/mlb-slack-tracker)
 
 # Features
