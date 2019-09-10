@@ -65,4 +65,4 @@ workflows:
             - build
           filters:
             branches:
-              only: maste
+              only: master
